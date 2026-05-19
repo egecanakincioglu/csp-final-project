@@ -35,8 +35,7 @@ This is my final project for the Client Side Programming (CSP) course instructed
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/egecanakincioglu/csp-final-project](https://github.com/egecanakincioglu/csp-final-project)
-
+git clone https://github.com/egecanakincioglu/csp-final-project
 # 2. Go to the project folder
 cd csp-final-project
 
