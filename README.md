@@ -1,67 +1,47 @@
-# Crypto Market Dashboard & Watchlist Application
+# CSP Final Project - Crypto Market Dashboard
 
-A fully functional React web application built as the final project for the Client Side Programming (CSP) course instructed by **Prof. Rina Behadini**. This application integrates with a real-time public REST API to provide a comprehensive cryptocurrency tracking dashboard, dynamic detail analysis, and a persistent client-side user watchlist.
-
----
-
-## 🎯 Project Requirements & Compliance Matrix
-
-This project fully demonstrates and satisfies all the architectural and engineering requirements specified in the course syllabus:
-
-| Syllabus Requirement | Project Implementation Summary | Status |
-| :--- | :--- | :---: |
-| **Vite + React Framework** | Scaffolded with Vite using React 19 and TypeScript for optimized HMR and type-safety. | **Compliant** |
-| **Real Public REST API** | Integrates with the official CoinGecko REST API for asynchronous financial data fetching. | **Compliant** |
-| **React Router (Min. 3 Pages)** | Features client-side navigation handling 3 distinct views natively. | **Compliant** |
-| **State Management & Hooks (Min. 4 Hooks)** | Utilizes exactly 4 distinct React Hooks, each solving a specific engineering purpose. | **Compliant** |
-| **Git & Version Control** | Developed using an atomic Feature-Branch Git workflow with explicit Pull Requests. | **Compliant** |
+This is my final project for the Client Side Programming (CSP) course instructed by **Prof. Rina Behadini**. It is a fully functional React application that connects to the CoinGecko REST API to show real-time crypto prices, display coin details, and let users manage a custom watchlist.
 
 ---
 
-## 🛠️ Core Hooks Architecture (Academic Justification)
+## 🎯 How Project Requirements Are Met
 
-To satisfy the core state management requirements, the codebase leverages four distinct React hooks, each serving a genuine, non-trivial performance or behavioral role:
-
-1. `useState`: Manages dynamic, volatile component levels such as API data grids, network loading indicators, HTTP error catching, and user search queries.
-2. `useEffect`: Coordinates side-effects by initiating asynchronous Axios fetch streams during component mount phases or when route parameters mutate. It is also used to mirror watchlist mutations directly into browser persistence.
-3. `useMemo`: Implements client-side compute optimization. It caches and prevents costly re-filtering routines of the 100+ coin market table on the Dashboard during continuous keystroke searches unless the underlying dataset changes.
-4. `useContext` (Global Context API): Resolves the prop-drilling problem by providing a centralized global state provider. It synchronizes active user favorite matrices (`watchlist`) seamlessly across multiple disjointed views.
-
----
-
-## 🗺️ Application Architecture & Page Routing
-
-The application utilizes a decoupled, clean folder directory structure (`/components`, `/context`, `/pages`, `/services`, `/types`) and features a strict client-side routing model handling 3 independent screens:
-
-* **Dashboard (`/`)**: Displays top cryptocurrency market pairs via an organized analytical table grid with dynamic local filtering, real-time pricing metrics, 24-hour gains/losses calculations, and row hover visual states.
-* **Coin Detail (`/coin/:id`)**: Uses dynamic segment tracking via URL routing variables to look up asset definitions. Renders large assets, granular metrics (Market Cap Rank, All-Time High), and securely interprets incoming structural description fields.
-* **Watchlist (`/watchlist`)**: Aggregates tracked coins from global context, filters live system values, and enables independent item removal. Includes an intuitive, action-driven placeholder screen when the dashboard tracking layer is empty.
+* **Vite & React:** Built using Vite with React 19 and TypeScript.
+* **Real Public REST API:** Fetches live market data from the official CoinGecko API using Axios.
+* **React Router (3 Pages):** Client-side navigation between 3 dynamic pages: Dashboard, Coin Detail, and Watchlist.
+* **4 Core Hooks:** Uses `useState`, `useEffect`, `useMemo`, and `useContext` for handling data, fetching, and performance.
+* **Version Control:** Managed entirely with Git branches and Pull Requests on GitHub.
 
 ---
 
-## ⚡ Technical Stack & Dependencies
+## 🛠️ React Hooks Used & Why
 
-* **Runtime:** React 19 & Vite
-* **Language Compiler:** TypeScript
-* **Routing Engine:** React Router (v7)
-* **HTTP Client:** Axios
-* **Persistence Layer:** Browser `localStorage` API
+1. `useState`: Used for storing API data lists, loading states, error messages, and search keywords.
+2. `useEffect`: Used for fetching live data asynchronously from the API when pages load, and saving the watchlist to `localStorage`.
+3. `useMemo`: Used on the Dashboard to optimize performance. It prevents filtering the 100+ coin list on every keystroke unless the search term actually changes.
+4. `useContext` (React 19 Context): Used to share the watchlist state globally between the Dashboard, CoinDetail, and Watchlist pages without prop-drilling.
 
 ---
 
-## 📦 Local Installation & Setup
+## 🗺️ Application Pages
 
-Follow these commands to clone, install, and run the development environment locally:
+* **Dashboard (`/`)**: Displays top cryptocurrencies in a clean table with dynamic search filtering and row hover effects.
+* **Coin Detail (`/coin/:id`)**: Shows detailed info for a selected coin (Market Cap Rank, All-Time High) and renders the asset description text safely.
+* **Watchlist (`/watchlist`)**: Displays the coins saved by the user. Users can view live prices or remove coins instantly. Shows a button to go back to the dashboard if empty.
+
+---
+
+## 📦 How to Run Locally
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/egecanakincioglu/csp-final-project
+git clone [https://github.com/egecanakincioglu/csp-final-project](https://github.com/egecanakincioglu/csp-final-project)
 
-# 2. Navigate to project directory
+# 2. Go to the project folder
 cd csp-final-project
 
-# 3. Install required node dependencies
+# 3. Install packages
 npm install
 
-# 4. Spin up local hot-reloading development server
+# 4. Start the development server
 npm run dev
