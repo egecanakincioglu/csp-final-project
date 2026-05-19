@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getTopCoins } from '../services/api';
 import type { CoinMarketData } from '../types/crypto';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const [coins, setCoins] = useState<CoinMarketData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,9 +17,12 @@ export const Dashboard = () => {
         const data = await getTopCoins();
         setCoins(data);
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
-        setError('Failed to fetch crypto data. Please try again later.');
+        setError(err?.response?.status === 429 
+          ? 'Rate limit exceeded. Please wait a minute and refresh.' 
+          : 'Failed to fetch crypto data. Please try again later.'
+        );
       } finally {
         setLoading(false);
       }
@@ -34,7 +39,7 @@ export const Dashboard = () => {
   }, [coins, searchTerm]);
 
   if (loading) return <div style={{ padding: '20px', color: '#fff' }}>Loading crypto data...</div>;
-  if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
+  if (error) return <div style={{ padding: '20px', color: '#f44336' }}>{error}</div>;
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#1a1a1a', color: '#fff', minHeight: '100vh' }}>
@@ -73,7 +78,11 @@ export const Dashboard = () => {
           {filteredCoins.map((coin) => {
             const isPositive = coin.price_change_percentage_24h >= 0;
             return (
-              <tr key={coin.id} style={{ borderBottom: '1px solid #222' }}>
+              <tr 
+                key={coin.id} 
+                onClick={() => navigate(`/coin/${coin.id}`)}
+                style={{ borderBottom: '1px solid #222', cursor: 'pointer' }}
+              >
                 <td style={{ padding: '12px' }}>{coin.market_cap_rank}</td>
                 <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <img src={coin.image} alt={coin.name} style={{ width: '24px', height: '24px' }} />
