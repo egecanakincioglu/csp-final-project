@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getTopCoins } from '../services/api';
 import type { CoinMarketData } from '../types/crypto';
 
@@ -6,6 +6,7 @@ export const Dashboard = () => {
   const [coins, setCoins] = useState<CoinMarketData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchCoins = async () => {
@@ -25,6 +26,13 @@ export const Dashboard = () => {
     fetchCoins();
   }, []);
 
+  const filteredCoins = useMemo(() => {
+    return coins.filter((coin) =>
+      coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [coins, searchTerm]);
+
   if (loading) return <div style={{ padding: '20px', color: '#fff' }}>Loading crypto data...</div>;
   if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
 
@@ -32,6 +40,25 @@ export const Dashboard = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#1a1a1a', color: '#fff', minHeight: '100vh' }}>
       <h2 style={{ marginBottom: '20px' }}>Crypto Market Dashboard</h2>
       
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Search coin by name or symbol..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '12px',
+            borderRadius: '6px',
+            border: '1px solid #444',
+            backgroundColor: '#2a2a2a',
+            color: '#fff',
+            fontSize: '16px',
+            outline: 'none'
+          }}
+        />
+      </div>
+
       <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
         <thead>
           <tr style={{ borderBottom: '2px solid #333', color: '#aaa' }}>
@@ -43,10 +70,10 @@ export const Dashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {coins.map((coin) => {
+          {filteredCoins.map((coin) => {
             const isPositive = coin.price_change_percentage_24h >= 0;
             return (
-              <tr key={coin.id} style={{ borderBottom: '1 solid #222', transition: 'background 0.2s' }}>
+              <tr key={coin.id} style={{ borderBottom: '1px solid #222' }}>
                 <td style={{ padding: '12px' }}>{coin.market_cap_rank}</td>
                 <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <img src={coin.image} alt={coin.name} style={{ width: '24px', height: '24px' }} />
