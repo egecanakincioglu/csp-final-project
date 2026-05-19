@@ -15,7 +15,7 @@ export const Dashboard = () => {
       try {
         setLoading(true);
         const data = await getTopCoins();
-        setCoins(data);
+        setCoins(Array.isArray(data) ? data : []);
         setError(null);
       } catch (err: any) {
         console.error(err);
@@ -32,9 +32,10 @@ export const Dashboard = () => {
   }, []);
 
   const filteredCoins = useMemo(() => {
+    if (!Array.isArray(coins)) return [];
     return coins.filter((coin) =>
-      coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+      coin?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coin?.symbol?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [coins, searchTerm]);
 
@@ -76,24 +77,28 @@ export const Dashboard = () => {
         </thead>
         <tbody>
           {filteredCoins.map((coin) => {
-            const isPositive = coin.price_change_percentage_24h >= 0;
+            const change24h = coin?.price_change_percentage_24h ?? 0;
+            const isPositive = change24h >= 0;
+            const price = coin?.current_price ?? 0;
+            const volume = coin?.total_volume ?? 0;
+
             return (
               <tr 
                 key={coin.id} 
                 onClick={() => navigate(`/coin/${coin.id}`)}
                 style={{ borderBottom: '1px solid #222', cursor: 'pointer' }}
               >
-                <td style={{ padding: '12px' }}>{coin.market_cap_rank}</td>
+                <td style={{ padding: '12px' }}>{coin?.market_cap_rank ?? '-'}</td>
                 <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img src={coin.image} alt={coin.name} style={{ width: '24px', height: '24px' }} />
-                  <strong>{coin.name}</strong>
-                  <span style={{ color: '#aaa', textTransform: 'uppercase', fontSize: '12px' }}>{coin.symbol}</span>
+                  <img src={coin?.image} alt={coin?.name} style={{ width: '24px', height: '24px' }} />
+                  <strong>{coin?.name ?? 'Unknown'}</strong>
+                  <span style={{ color: '#aaa', textTransform: 'uppercase', fontSize: '12px' }}>{coin?.symbol ?? ''}</span>
                 </td>
-                <td style={{ padding: '12px' }}>${coin.current_price.toLocaleString()}</td>
+                <td style={{ padding: '12px' }}>${price.toLocaleString()}</td>
                 <td style={{ padding: '12px', color: isPositive ? '#4caf50' : '#f44336' }}>
-                  {isPositive ? '+' : ''}{coin.price_change_percentage_24h.toFixed(2)}%
+                  {isPositive ? '+' : ''}{change24h.toFixed(2)}%
                 </td>
-                <td style={{ padding: '12px' }}>${coin.total_volume.toLocaleString()}</td>
+                <td style={{ padding: '12px' }}>${volume.toLocaleString()}</td>
               </tr>
             );
           })}
