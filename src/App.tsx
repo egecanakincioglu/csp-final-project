@@ -6,9 +6,9 @@ import { Watchlist } from './pages/WatchList';
 function App() {
   return (
     <Router>
-      <nav style={{ padding: '10px', background: '#222', color: '#fff', display: 'flex', gap: '15px' }}>
-        <Link to="/" style={{ color: '#fff' }}>Dashboard</Link>
-        <Link to="/watchlist" style={{ color: '#fff' }}>Watchlist</Link>
+      <nav style={{ padding: '20px', background: '#222', color: '#fff', display: 'flex', gap: '15px' }}>
+        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Dashboard</Link>
+        <Link to="/watchlist" style={{ color: '#fff', textDecoration: 'none' }}>Watchlist</Link>
       </nav>
 
       <Routes>
