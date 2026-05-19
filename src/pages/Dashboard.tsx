@@ -9,6 +9,7 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCoins = async () => {
@@ -39,71 +40,85 @@ export const Dashboard = () => {
     );
   }, [coins, searchTerm]);
 
-  if (loading) return <div style={{ padding: '20px', color: '#fff' }}>Loading crypto data...</div>;
-  if (error) return <div style={{ padding: '20px', color: '#f44336' }}>{error}</div>;
+  if (loading) return <div style={{ padding: '30px', color: '#fff', backgroundColor: '#141414', minHeight: '100vh' }}>Loading crypto data...</div>;
+  if (error) return <div style={{ padding: '30px', color: '#f44336', backgroundColor: '#141414', minHeight: '100vh' }}>{error}</div>;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#1a1a1a', color: '#fff', minHeight: '100vh' }}>
-      <h2 style={{ marginBottom: '20px' }}>Crypto Market Dashboard</h2>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Search coin by name or symbol..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '6px',
-            border: '1px solid #444',
-            backgroundColor: '#2a2a2a',
-            color: '#fff',
-            fontSize: '16px',
-            outline: 'none'
-          }}
-        />
-      </div>
+    <div style={{ padding: '40px 20px', fontFamily: '"Segoe UI", Roboto, sans-serif', backgroundColor: '#141414', color: '#fff', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <h2 style={{ marginBottom: '24px', fontSize: '28px', fontWeight: 600, letterSpacing: '-0.5px' }}>Crypto Market Dashboard</h2>
+        
+        <div style={{ marginBottom: '24px' }}>
+          <input
+            type="text"
+            placeholder="Search coin by name or symbol..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '14px 16px',
+              borderRadius: '8px',
+              border: '1px solid #2d2d2d',
+              backgroundColor: '#1e1e1e',
+              color: '#fff',
+              fontSize: '16px',
+              outline: 'none',
+              boxSizing: 'border-box',
+              transition: 'border-color 0.2s',
+            }}
+          />
+        </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #333', color: '#aaa' }}>
-            <th style={{ padding: '12px' }}>#</th>
-            <th style={{ padding: '12px' }}>Coin</th>
-            <th style={{ padding: '12px' }}>Price</th>
-            <th style={{ padding: '12px' }}>24h Change</th>
-            <th style={{ padding: '12px' }}>24h Volume</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCoins.map((coin) => {
-            const change24h = coin?.price_change_percentage_24h ?? 0;
-            const isPositive = change24h >= 0;
-            const price = coin?.current_price ?? 0;
-            const volume = coin?.total_volume ?? 0;
-
-            return (
-              <tr 
-                key={coin.id} 
-                onClick={() => navigate(`/coin/${coin.id}`)}
-                style={{ borderBottom: '1px solid #222', cursor: 'pointer' }}
-              >
-                <td style={{ padding: '12px' }}>{coin?.market_cap_rank ?? '-'}</td>
-                <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <img src={coin?.image} alt={coin?.name} style={{ width: '24px', height: '24px' }} />
-                  <strong>{coin?.name ?? 'Unknown'}</strong>
-                  <span style={{ color: '#aaa', textTransform: 'uppercase', fontSize: '12px' }}>{coin?.symbol ?? ''}</span>
-                </td>
-                <td style={{ padding: '12px' }}>${price.toLocaleString()}</td>
-                <td style={{ padding: '12px', color: isPositive ? '#4caf50' : '#f44336' }}>
-                  {isPositive ? '+' : ''}{change24h.toFixed(2)}%
-                </td>
-                <td style={{ padding: '12px' }}>${volume.toLocaleString()}</td>
+        <div style={{ overflowX: 'auto', backgroundColor: '#1e1e1e', borderRadius: '12px', border: '1px solid #2d2d2d' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #2d2d2d', color: '#888', fontSize: '14px' }}>
+                <th style={{ padding: '16px 20px' }}>#</th>
+                <th style={{ padding: '16px 20px' }}>Coin</th>
+                <th style={{ padding: '16px 20px' }}>Price</th>
+                <th style={{ padding: '16px 20px' }}>24h Change</th>
+                <th style={{ padding: '16px 20px' }}>24h Volume</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {filteredCoins.map((coin) => {
+                const change24h = coin?.price_change_percentage_24h ?? 0;
+                const isPositive = change24h >= 0;
+                const price = coin?.current_price ?? 0;
+                const volume = coin?.total_volume ?? 0;
+                const isHovered = hoveredRow === coin.id;
+
+                return (
+                  <tr 
+                    key={coin.id} 
+                    onClick={() => navigate(`/coin/${coin.id}`)}
+                    onMouseEnter={() => setHoveredRow(coin.id)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                    style={{ 
+                      borderBottom: '1px solid #2d2d2d', 
+                      cursor: 'pointer',
+                      backgroundColor: isHovered ? '#262626' : 'transparent',
+                      transition: 'background-color 0.15s ease'
+                    }}
+                  >
+                    <td style={{ padding: '16px 20px', color: '#888' }}>{coin?.market_cap_rank ?? '-'}</td>
+                    <td style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <img src={coin?.image} alt={coin?.name} style={{ width: '28px', height: '28px' }} />
+                      <span style={{ fontWeight: 600 }}>{coin?.name ?? 'Unknown'}</span>
+                      <span style={{ color: '#666', textTransform: 'uppercase', fontSize: '12px', fontWeight: 500 }}>{coin?.symbol ?? ''}</span>
+                    </td>
+                    <td style={{ padding: '16px 20px', fontWeight: 500 }}>${price.toLocaleString()}</td>
+                    <td style={{ padding: '16px 20px', color: isPositive ? '#00b06f' : '#f44336', fontWeight: 600 }}>
+                      {isPositive ? '+' : ''}{change24h.toFixed(2)}%
+                    </td>
+                    <td style={{ padding: '16px 20px', color: '#ccc' }}>${volume.toLocaleString()}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
