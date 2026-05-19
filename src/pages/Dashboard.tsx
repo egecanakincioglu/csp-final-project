@@ -15,8 +15,8 @@ export const Dashboard = () => {
         setCoins(data);
         setError(null);
       } catch (err) {
-        console.error('An error occurred while retrieving data:', err);
-        setError('Cryptocurrency data could not be loaded. Please try again later.');
+        console.error(err);
+        setError('Failed to fetch crypto data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -25,21 +25,44 @@ export const Dashboard = () => {
     fetchCoins();
   }, []);
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading cryptocurrency data...</div>;
+  if (loading) return <div style={{ padding: '20px', color: '#fff' }}>Loading crypto data...</div>;
   if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Cryptocurrency World (Dashboard)</h2>
-      <p>Number of coins successfully retrieved: {coins.length}</p>
-
-      <ul>
-        {coins.slice(0, 3).map((coin) => (
-          <li key={coin.id}>
-            {coin.name} ({coin.symbol.toUpperCase()}): ${coin.current_price}
-          </li>
-        ))}
-      </ul>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#1a1a1a', color: '#fff', minHeight: '100vh' }}>
+      <h2 style={{ marginBottom: '20px' }}>Crypto Market Dashboard</h2>
+      
+      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <thead>
+          <tr style={{ borderBottom: '2px solid #333', color: '#aaa' }}>
+            <th style={{ padding: '12px' }}>#</th>
+            <th style={{ padding: '12px' }}>Coin</th>
+            <th style={{ padding: '12px' }}>Price</th>
+            <th style={{ padding: '12px' }}>24h Change</th>
+            <th style={{ padding: '12px' }}>24h Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          {coins.map((coin) => {
+            const isPositive = coin.price_change_percentage_24h >= 0;
+            return (
+              <tr key={coin.id} style={{ borderBottom: '1 solid #222', transition: 'background 0.2s' }}>
+                <td style={{ padding: '12px' }}>{coin.market_cap_rank}</td>
+                <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <img src={coin.image} alt={coin.name} style={{ width: '24px', height: '24px' }} />
+                  <strong>{coin.name}</strong>
+                  <span style={{ color: '#aaa', textTransform: 'uppercase', fontSize: '12px' }}>{coin.symbol}</span>
+                </td>
+                <td style={{ padding: '12px' }}>${coin.current_price.toLocaleString()}</td>
+                <td style={{ padding: '12px', color: isPositive ? '#4caf50' : '#f44336' }}>
+                  {isPositive ? '+' : ''}{coin.price_change_percentage_24h.toFixed(2)}%
+                </td>
+                <td style={{ padding: '12px' }}>${coin.total_volume.toLocaleString()}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
