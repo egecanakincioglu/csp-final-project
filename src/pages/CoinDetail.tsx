@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCoinDetail } from '../services/api';
+import { useWatchlist } from '../context/WatchlistContext';
 import type { CoinDetailData } from '../types/crypto';
 
 export const CoinDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  
   const [coin, setCoin] = useState<CoinDetailData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,32 +42,57 @@ export const CoinDetail = () => {
 
   const change24h = coin?.market_data?.price_change_percentage_24h ?? 0;
   const isPositive = change24h >= 0;
+  const favorited = id ? isInWatchlist(id) : false;
+
+  const handleWatchlistToggle = () => {
+    if (!id) return;
+    if (favorited) {
+      removeFromWatchlist(id);
+    } else {
+      addToWatchlist(id);
+    }
+  };
 
   return (
     <div style={{ padding: '40px 20px', fontFamily: '"Segoe UI", Roboto, sans-serif', backgroundColor: '#141414', color: '#fff', minHeight: '100vh' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         
-        <button 
-          onClick={() => navigate('/')} 
-          style={{ 
-            padding: '10px 18px', 
-            marginBottom: '30px', 
-            backgroundColor: '#1e1e1e', 
-            color: '#fff', 
-            border: '1px solid #2d2d2d', 
-            borderRadius: '8px', 
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: 500,
-            transition: 'background-color 0.2s'
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#262626')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e1e1e')}
-        >
-          &larr; Back to Dashboard
-        </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+          <button 
+            onClick={() => navigate('/')} 
+            style={{ 
+              padding: '10px 18px', 
+              backgroundColor: '#1e1e1e', 
+              color: '#fff', 
+              border: '1px solid #2d2d2d', 
+              borderRadius: '8px', 
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            &larr; Back to Dashboard
+          </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'between', gap: '20px', marginBottom: '32px', flexWrap: 'wrap' }}>
+          <button
+            onClick={handleWatchlistToggle}
+            style={{
+              padding: '10px 18px',
+              backgroundColor: favorited ? '#f44336' : '#00b06f',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600,
+              transition: 'background-color 0.2s'
+            }}
+          >
+            {favorited ? 'Remove from Watchlist' : 'Add to Watchlist'}
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '32px', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
             <img src={coin?.image?.large} alt={coin?.name} style={{ width: '56px', height: '56px' }} />
             <div>
