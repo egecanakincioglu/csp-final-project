@@ -1,76 +1,67 @@
-# React + TypeScript + Vite
+# Crypto Market Dashboard & Watchlist Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully functional React web application built as the final project for the Client Side Programming (CSP) course instructed by **Prof. Rina Behadini**. This application integrates with a real-time public REST API to provide a comprehensive cryptocurrency tracking dashboard, dynamic detail analysis, and a persistent client-side user watchlist.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🎯 Project Requirements & Compliance Matrix
 
-## React Compiler
+This project fully demonstrates and satisfies all the architectural and engineering requirements specified in the course syllabus:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+| Syllabus Requirement | Project Implementation Summary | Status |
+| :--- | :--- | :---: |
+| **Vite + React Framework** | Scaffolded with Vite using React 19 and TypeScript for optimized HMR and type-safety. | **Compliant** |
+| **Real Public REST API** | Integrates with the official CoinGecko REST API for asynchronous financial data fetching. | **Compliant** |
+| **React Router (Min. 3 Pages)** | Features client-side navigation handling 3 distinct views natively. | **Compliant** |
+| **State Management & Hooks (Min. 4 Hooks)** | Utilizes exactly 4 distinct React Hooks, each solving a specific engineering purpose. | **Compliant** |
+| **Git & Version Control** | Developed using an atomic Feature-Branch Git workflow with explicit Pull Requests. | **Compliant** |
 
-Note: This will impact Vite dev & build performances.
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Core Hooks Architecture (Academic Justification)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To satisfy the core state management requirements, the codebase leverages four distinct React hooks, each serving a genuine, non-trivial performance or behavioral role:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. `useState`: Manages dynamic, volatile component levels such as API data grids, network loading indicators, HTTP error catching, and user search queries.
+2. `useEffect`: Coordinates side-effects by initiating asynchronous Axios fetch streams during component mount phases or when route parameters mutate. It is also used to mirror watchlist mutations directly into browser persistence.
+3. `useMemo`: Implements client-side compute optimization. It caches and prevents costly re-filtering routines of the 100+ coin market table on the Dashboard during continuous keystroke searches unless the underlying dataset changes.
+4. `useContext` (Global Context API): Resolves the prop-drilling problem by providing a centralized global state provider. It synchronizes active user favorite matrices (`watchlist`) seamlessly across multiple disjointed views.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🗺️ Application Architecture & Page Routing
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The application utilizes a decoupled, clean folder directory structure (`/components`, `/context`, `/pages`, `/services`, `/types`) and features a strict client-side routing model handling 3 independent screens:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+* **Dashboard (`/`)**: Displays top cryptocurrency market pairs via an organized analytical table grid with dynamic local filtering, real-time pricing metrics, 24-hour gains/losses calculations, and row hover visual states.
+* **Coin Detail (`/coin/:id`)**: Uses dynamic segment tracking via URL routing variables to look up asset definitions. Renders large assets, granular metrics (Market Cap Rank, All-Time High), and securely interprets incoming structural description fields.
+* **Watchlist (`/watchlist`)**: Aggregates tracked coins from global context, filters live system values, and enables independent item removal. Includes an intuitive, action-driven placeholder screen when the dashboard tracking layer is empty.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-"# csp-final-project" 
+---
+
+## ⚡ Technical Stack & Dependencies
+
+* **Runtime:** React 19 & Vite
+* **Language Compiler:** TypeScript
+* **Routing Engine:** React Router (v7)
+* **HTTP Client:** Axios
+* **Persistence Layer:** Browser `localStorage` API
+
+---
+
+## 📦 Local Installation & Setup
+
+Follow these commands to clone, install, and run the development environment locally:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/egecanakincioglu/csp-final-project
+
+# 2. Navigate to project directory
+cd csp-final-project
+
+# 3. Install required node dependencies
+npm install
+
+# 4. Spin up local hot-reloading development server
+npm run dev
